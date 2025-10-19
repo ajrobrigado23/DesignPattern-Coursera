@@ -1,7 +1,4 @@
-import strategy.NoDiscount;
-import strategy.SeniorDiscount;
-import strategy.ShoppingCart;
-import strategy.StudentDiscount;
+import strategy.*;
 
 import java.util.function.Consumer;
 
@@ -10,23 +7,62 @@ public class Main {
 
         // Create a shopping cart (Learning Strategy Pattern)
         ShoppingCart cart = new ShoppingCart();
-        // Apply student discount
-        cart.setDiscountStrategy(new StudentDiscount());
-        double studentAmount = cart.checkout(100);
-        // Apply no discount
-        cart.setDiscountStrategy(new NoDiscount());
-        double noDiscountAmount = cart.checkout(100);
-        // Apply senior discount
-        cart.setDiscountStrategy(new SeniorDiscount());
-        double seniorAmount = cart.checkout(100);
 
-        Consumer<Double> display = a -> System.out.println("Amount you need to pay with or without discount: " + a);
+        showDiscountContent(cart, 100, "student");
+        showDiscountContent(cart, 100, "senior");
+        showDiscountContent(cart, 100, "none");
 
-        // Display student discount
-        display.accept(studentAmount);
-        // Display no discount
-        display.accept(noDiscountAmount);
-        // Display senior discount
-        display.accept(seniorAmount);
     }
+
+    public static void showDiscountContent(ShoppingCart cart, double price, String discountType) {
+
+        switch (discountType) {
+            case "student" -> {
+                // Apply student discount
+                cart.setDiscountStrategy(new StudentDiscount());
+                double studentAmount = cart.checkout(price);
+
+                System.out.println("-----------------");
+
+                System.out.printf("""
+                        Original Price: ₱%.2f
+                        Applied Student Discount: 10%%
+                        Final Price: ₱%.2f
+                        """, price, studentAmount);
+
+            }
+            case "senior" -> {
+                // Apply senior discount
+                cart.setDiscountStrategy(new SeniorDiscount());
+                double seniorAmount = cart.checkout(100);
+
+                System.out.println("-----------------");
+
+                System.out.printf("""
+                        Original Price: ₱%.2f
+                        Applied Senior Discount: 20%%
+                        Final Price: ₱%.2f
+                        """, price, seniorAmount);
+            }
+            case "none" -> {
+                // Apply no discount
+                cart.setDiscountStrategy(new NoDiscount());
+                double noDiscountAmount = cart.checkout(100);
+
+                System.out.println("-----------------");
+
+                System.out.printf("""
+                        Original Price: ₱%.2f
+                        Applied Discount: 0%%
+                        Final Price: ₱%.2f
+                        """, price, noDiscountAmount);
+            }
+
+            default -> System.out.println("Invalid discount type.");
+
+
+        }
+
+    }
+
 }
